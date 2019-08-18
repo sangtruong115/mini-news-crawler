@@ -29,6 +29,7 @@ try {
 
 		$inputMessage = "Please enter an URL of news
 			NOW support crawling new data from https://www.thesaigontimes.vn
+			- E.g.: https://vnexpress.net/the-gioi/nguoi-bieu-tinh-hong-kong-tuan-hanh-duoi-mua-3969363.html
 			- E.g.: https://www.thesaigontimes.vn/121624/Cuoc-cach-mang-dau-khi-da-phien.html
 		";
 		$inputUrl = StringHelper::readStringFromInput($inputMessage);

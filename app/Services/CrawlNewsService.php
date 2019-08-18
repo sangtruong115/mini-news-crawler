@@ -25,9 +25,11 @@ class CrawlNewsService {
 	const LIMIT_CSV_ROW = 1000;
 
 	const DOMAIN_THESAIGONTIMES = "thesaigontimes.vn";
+	const DOMAIN_VNEXPRESS = "vnexpress.net";
 
 	const SUPPORTED_DOMAIN_LIST = [
 		"thesaigontimes.vn",
+		"vnexpress.net",
 	];
 
 	/**
@@ -133,19 +135,7 @@ class CrawlNewsService {
 	 */
 	private function validSupportedUrl()
 	{
-		$result = false;
-
-		$supportedDomainList = self::SUPPORTED_DOMAIN_LIST;
-		foreach ($supportedDomainList as $key => $supportedDomain) {
-			if (strpos($this->domain, $supportedDomain) === false) {
-				$result = false;
-				break;
-			} else {
-				$result = true;
-			}
-		}
-
-	    return $result;
+		return in_array($this->domain, self::SUPPORTED_DOMAIN_LIST);
 	}
 
 	/**
@@ -220,6 +210,9 @@ class CrawlNewsService {
 		switch ($this->domain) {
 			case self::DOMAIN_THESAIGONTIMES :
 				$data = $this->processHtmlContentFromTheSaigonTimes();
+				break;
+			case self::DOMAIN_VNEXPRESS :
+				$data = $this->processHtmlContentFromVnExpress();
 				break;
 			
 			default:
@@ -397,6 +390,130 @@ class CrawlNewsService {
 		    			if (!empty($href)) {
 							$newUrl = $this->getFullUrlFromHref($href);
 				    		$tmpData = $this->processNewsContentFromTheSaigonTimes($newUrl);
+				    		if (!empty($tmpData)) {
+				    			$data[] = $tmpData;
+				    		}
+		    			}
+		    		}
+	    		}
+    		}
+
+		    $html->clear(); 
+		    unset($html);
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Process news content from thesaigontimes.vn
+	 *
+	 * @author    Sang Truong <sangtruong115@gmail.com>
+	 * 
+	 * @return array
+	 */
+	private function processNewsContentFromVnExpress($url)
+	{
+		$data = [];
+
+		// Limit CSV data row
+		if ($this->countinCsvRow >= $this->limitCsvRow) {
+			return $data;
+		}
+
+		if ($this->domain == self::DOMAIN_VNEXPRESS) {
+			// Use Simple HTML Dom to get data
+			$html = file_get_html($url);
+
+		    $mainId = "section.container";
+
+		    $title = '';
+		    $author = '';
+		    $postedDate = '';
+
+		    if ($html !== false) {
+				$titleObject = $html->find("$mainId .title_news_detail", 0);
+				if (isset($titleObject) && is_object($titleObject)) {
+					$title = trim($titleObject->plaintext);
+				}
+
+				$contentDetail = $html->find("$mainId .content_detail p");
+				$authorObject = end($contentDetail);
+				if (isset($authorObject) && is_object($authorObject)) {
+					$author = $this->getAuthorNameFromString($authorObject->plaintext);
+				}
+
+				$postedDateObject = $html->find("$mainId header .time", 0);
+				if (isset($postedDateObject) && is_object($postedDateObject)) {
+					$postedDate = $this->getPostedDateFromString($postedDateObject->plaintext);
+				}
+
+				if (!empty($title)) {
+					$data = [
+						$url,
+						$title,
+						$author,
+						$postedDate,
+					];
+
+					// Counting CSV data row
+					$this->countingCsvDataRow++;
+				}
+
+			    $html->clear(); 
+			    unset($html);
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Process HTML content from vnexpress.net
+	 *
+	 * @author    Sang Truong <sangtruong115@gmail.com>
+	 * 
+	 * @return array
+	 */
+	private function processHtmlContentFromVnExpress()
+	{
+		$data = [];
+
+		if ($this->domain == self::DOMAIN_VNEXPRESS) {
+			$url = $this->currentUrl;
+			$baseUrl = $this->baseUrl;
+
+		    $data[] = ["URL", "Title", "Author", "Posted Date"];	// header
+
+		    // Get main news content from URL
+		    $tmpData = $this->processNewsContentFromVnExpress($url);
+    		if (!empty($tmpData)) {
+    			$data[] = $tmpData;
+    		}
+
+			// Use Simple HTML Dom to get data
+			$html = file_get_html($url);
+
+		    $moreUrlDataList = [];
+    		$moreUrlDataList[] = $html->find("#box_xemnhieunhat .list_title a");
+    		$moreUrlDataList[] = $html->find("#box_morelink_detail .list_title a");
+    		$moreUrlDataList[] = $html->find(".box_bottom_detail .header_toppic a");
+    		$moreUrlDataList[] = $html->find(".box_bottom_detail .view_more");
+    		$moreUrlDataList[] = $html->find(".box_bottom_detail .list_title a");
+    		$moreUrlDataList[] = $html->find(".box_bottom_detail .list_news .title_news a");
+    		$moreUrlDataList[] = $html->find(".sidebar_3 .box_category .list_news .title_news a");
+    		$moreUrlDataList[] = $html->find(".sidebar_3 .box_category .list_title a");
+    		$moreUrlDataList[] = $html->find(".sidebar_home_2 .list_news .title_news a");
+    		$moreUrlDataList[] = $html->find(".sidebar_home_2 .list_title a");
+    		
+    		// Get more news content from other URLs in page
+    		foreach ($moreUrlDataList as $key => $moreUrlData) {
+	    		if (!empty($moreUrlData)) {
+		    		foreach ($moreUrlData as $key => $moreUrl) {
+		    			$href = isset($moreUrl->href) ? $moreUrl->href : '';
+		    			if (!empty($href)) {
+							$newUrl = $this->getFullUrlFromHref($href);
+				    		$tmpData = $this->processNewsContentFromVnExpress($newUrl);
 				    		if (!empty($tmpData)) {
 				    			$data[] = $tmpData;
 				    		}
