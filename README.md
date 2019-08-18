@@ -21,12 +21,12 @@ public/export/csv/
 ```
 
 ### Version
-- `0.1` Crawl news from thesaigontimes.vn
+- `0.2` Crawl news from thesaigontimes.vn, vnexpress.net
 
 ### Roadmap
-- `0.1` Crawl news from thesaigontimes.vn
-- `0.2` Crawl news from vnexpress.net
-- `0.3` Crawl news from tuoitre.vn
+- `0.1` Crawl news from thesaigontimes.vn (15/08/2019)
+- `0.2` Crawl news from vnexpress.net (19/08/2019)
+- `0.3` Crawl news from tuoitre.vn (20/08/2019)
 
 ## Development
 

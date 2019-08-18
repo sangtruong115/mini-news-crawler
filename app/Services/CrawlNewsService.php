@@ -5,9 +5,12 @@ if (!class_exists("StringHelper")) include_once("app/Common/Helpers/StringHelper
 
 /**
  * CrawlNewsService Class
+ * 	Purpose: crawl news from following online newspaper sites
+ * 		thesaigontimes.vn, 
+ * 		vnexpress.net,
  * 
  * @author  Sang Truong (sangtruong115@gmail.com)
- * @version 0.1
+ * @version 0.2
  */
 class CrawlNewsService {
 	

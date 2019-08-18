@@ -4,7 +4,6 @@
  * StringHelper Class
  * 
  * @author  Sang Truong (sangtruong115@gmail.com)
- * @version 0.1
  */
 class StringHelper {
 	/**
