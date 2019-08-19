@@ -28,9 +28,10 @@ try {
 	if (strtoupper($goNext) == "Y") {
 
 		$inputMessage = "Please enter an URL of news
-			NOW support crawling new data from https://www.thesaigontimes.vn
-			- E.g.: https://vnexpress.net/the-gioi/nguoi-bieu-tinh-hong-kong-tuan-hanh-duoi-mua-3969363.html
-			- E.g.: https://www.thesaigontimes.vn/121624/Cuoc-cach-mang-dau-khi-da-phien.html
+			NOW support crawling new data from thesaigontimes.vn, vnexpress.net, tuoitre.vn
+				- E.g.: https://www.thesaigontimes.vn/121624/Cuoc-cach-mang-dau-khi-da-phien.html
+				- E.g.: https://vnexpress.net/the-gioi/nguoi-bieu-tinh-hong-kong-tuan-hanh-duoi-mua-3969363.html
+				- E.g.: https://tuoitre.vn/mua-tuu-truong-cua-ba-20190818110210021.htm
 		";
 		$inputUrl = StringHelper::readStringFromInput($inputMessage);
 		StringHelper::printString($inputUrl, "You input URL");

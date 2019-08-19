@@ -1,5 +1,7 @@
-/public/export
-/public/export/csv
+/public/**/*.csv
+/public/**/*.pdf
+/public/**/*.xls
+/public/**/*.xlsx
+/public/**/*.txt
 
-!/public/export/.keep
-!/public/export/csv/.keep
+!/public/**/*.keep
